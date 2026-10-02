@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ٹریڈ بُک</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f1f3ef;--card:#fff;--ink:#1d2a24;--mut:#667269;--ac:#1f6b4f;--ac2:#e3efe9;--bad:#b3401e;--bd:#d5dbd4;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141a17;--card:#1e2723;--ink:#e8eee9;--mut:#93a097;--ac:#4fb68d;--ac2:#22362d;--bad:#ef8a65;--bd:#33403a}}
+:root[data-theme="dark"]{--bg:#141a17;--card:#1e2723;--ink:#e8eee9;--mut:#93a097;--ac:#4fb68d;--ac2:#22362d;--bad:#ef8a65;--bd:#33403a}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Noto Naskh Arabic','Segoe UI',Tahoma,sans-serif;font-size:17px;line-height:1.7;padding-bottom:84px}
+header{background:var(--ac);color:#fff;padding:12px 14px;display:flex;align-items:center;gap:10px;justify-content:space-between}
+header h1{margin:0;font-size:21px}
+header input{width:auto;border:0;padding:4px 8px;font-size:15px}
+main{padding:12px;max-width:640px;margin:auto}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:var(--card);border-top:1px solid var(--bd);padding-bottom:env(safe-area-inset-bottom,0px);z-index:5}
+nav button{flex:1;border:0;background:none;color:var(--mut);font:inherit;font-size:14px;padding:10px 2px;cursor:pointer}
+nav button.on{color:var(--ac);font-weight:700;box-shadow:inset 0 3px 0 var(--ac)}
+.c{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:12px;margin-bottom:12px}
+h2{font-size:18px;margin:0 0 8px}
+label{display:block;font-size:14px;color:var(--mut);margin-top:8px}
+input,select{width:100%;font:inherit;padding:8px 10px;border:1px solid var(--bd);border-radius:6px;background:var(--bg);color:var(--ink)}
+button.b{width:100%;margin-top:12px;background:var(--ac);color:#fff;border:0;border-radius:6px;font:inherit;font-weight:700;padding:10px;cursor:pointer}
+button.s{background:var(--ac2);color:var(--ac);border:0;border-radius:6px;font:inherit;font-size:14px;padding:3px 10px;cursor:pointer}
+button.x{background:none;border:0;color:var(--bad);font-size:14px;cursor:pointer;font-family:inherit}
+.g{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.k{background:var(--ac2);border-radius:6px;padding:8px 10px}
+.k small{display:block;color:var(--mut);font-size:13px;line-height:1.4}
+.k b{font-size:20px}
+.r{display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px dashed var(--bd);padding:8px 0}
+.r:last-child{border:0}
+.m{color:var(--mut);font-size:14px}
+.bad{color:var(--bad)}.ok{color:var(--ac)}
+.tot{font-size:18px;font-weight:700;color:var(--ac);margin-top:6px}
+img.t{width:44px;height:44px;object-fit:cover;border-radius:6px;cursor:pointer}
+#ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9;align-items:center;justify-content:center}
+#ov img{max-width:96%;max-height:92%}
+</style>
+</head>
+<body>
+<header><h1 id="hd">📒 ٹریڈ بُک</h1><input type="date" id="dt"><button class="s" id="lg" onclick="tg()">EN</button></header>
+<main id="app"></main>
+<nav id="nav"></nav>
+<div id="ov" onclick="this.style.display='none'"><img id="ovi" alt=""></div>
+<script>
+var db={buys:[],spay:[],sales:[],cust:[],led:[],exp:[],wt:{}};
+try{var s=JSON.parse(localStorage.getItem('phalli')||'null');if(s)db=Object.assign(db,s)}catch(e){}
+function save(){try{localStorage.setItem('phalli',JSON.stringify(db))}catch(e){alert('جگہ ختم ہو گئی ہے، پرانی تصویریں حذف کریں یا بیک اپ لیں')}}
+var tab='home',D=new Date().toLocaleDateString('en-CA'),draftPhoto='';
+var $=function(i){return document.getElementById(i)};
+var N=function(v){return parseFloat(v)||0};
+var F=function(v){return Math.round(v).toLocaleString('en-US')};
+var E=function(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
+var sum=function(a,f){return a.reduce(function(t,x){return t+N(x[f])},0)};
+var id=function(){return Date.now()+Math.floor(Math.random()*1000)};
+var EN=[['فرق "آج" والے ٹیب میں خود نظر آئے گا: شروع + خریداری − فروخت = متوقع بند وزن۔','The difference appears automatically in the Today tab: opening + purchases − sales = expected closing weight.'],['"وزن" ٹیب میں صبح اور شام کا وزن لکھیں تو یہاں فرق نظر آئے گا۔','Enter morning and evening weight in the Weight tab to see the difference here.'],['جگہ ختم ہو گئی ہے، پرانی تصویریں حذف کریں یا بیک اپ لیں','Storage is full. Delete old photos or take a backup'],['ادھار کے لیے گاہک چنیں (کھاتہ ٹیب میں پہلے گاہک بنائیں)','Choose a customer for credit (create the customer first in the Khata tab)'],['کاروباری سامان (ترازو، تھیلے، ریڑھی، مرمت)','Business tools (scale, bags, cart, repairs)'],['روزانہ خرچہ (کھانا، کرایہ، مزدوری)','Daily expense (food, rent, labour)'],['پوری رقم نقد ہو تو خالی چھوڑیں','Leave empty if fully paid in cash'],['ابھی کوئی خریداری درج نہیں۔','No purchases yet.'],['دکان بند کرتے وقت وزن (کلو)','Weight at closing (kg)'],['دکان کھولتے وقت وزن (کلو)','Weight at opening (kg)'],['آج ابھی کوئی فروخت نہیں۔','No sales today.'],['نقد آمد (فروخت + وصولی)','Cash in (sales + recoveries)'],['گاہک (صرف ادھار کے لیے)','Customer (for credit only)'],['نقد خرچ (خرچہ + مال)','Cash out (expenses + stock)'],['سپلائر / دکان کا نام','Supplier / shop name'],['ابھی کوئی گاہک نہیں۔','No customers yet.'],['فروخت کا وزن (کلو)','Weight sold (kg)'],[' کلو، اصل بند وزن ',' kg, actual closing '],['آج کوئی خرچہ نہیں۔','No expenses today.'],['بیک اپ محفوظ کریں','Save backup'],['بیک اپ واپس لائیں','Restore backup'],['بیک اپ واپس آ گیا','Backup restored'],['گاہکوں سے لینا ہے','To receive from customers'],['سپلائر کو دینا ہے','To pay suppliers'],['وزن اور ریٹ لکھیں','Enter weight and rate'],['کتنی رقم ادا کی؟','Amount paid?'],['کوئی اندراج نہیں','No entries'],['آج کا نقد بچت: ','Today\'s cash saving: '],['فائل درست نہیں','Invalid file'],['فروخت درج کریں','Add sale'],['گاہک شامل کریں','Add customer'],['کاروباری سامان','Business tools'],['پچھلی خریداری','Past purchases'],['نقد وصول ہوئے','Cash received'],['— کوئی نہیں —','— None —'],['فون (اختیاری)','Phone (optional)'],['وصولی کی رقم؟','Amount received?'],['ادھار کی رقم؟','Credit amount?'],['خرچہ درج کریں','Add expense'],['باقی لین دین','Pending dues'],['وزن برابر ہے','Weight matches'],['وزن کی جانچ','Weight check'],[' + خریداری ',' + purchases '],['مال خریداری','Purchase of stock'],['نقد ادا کیے','Paid in cash'],['بل کی تصویر','Bill photo'],['آج کی فروخت','Today\'s sales'],['ادھار لکھیں','Add credit'],['آج کا حساب','Today\'s account'],['ریٹ فی کلو','Rate per kg'],['محفوظ کریں','Save'],['کل ادھار: ','Total credit: '],['روزانہ وزن','Daily weight'],['آج کے خرچے','Today\'s expenses'],['ٹریڈ بُک','TradeBook'],[' − فروخت ',' − sales '],[' = متوقع ',' = expected '],['وزن (کلو)','Weight (kg)'],['حذف کریں؟','Delete?'],[' | ادھار ',' | credit '],['رقم لکھیں','Enter amount'],['وصولی لیں','Receive payment'],['کل فروخت','Total sales'],[' روپے | ',' Rs | '],['کل رقم: ','Total: '],[' | باقی ',' | remaining '],['نیا گاہک','New customer'],['خریداری','Purchases'],['زیادہ: ','Excess: '],['ادھار: ','Credit: '],[' کلو × ',' kg × '],[' | نقد ',' | cash '],['ادا کیا','Paid'],['بیک اپ','Backup'],['کل رقم','Total amount'],['سپلائر','Supplier'],['ادھار ','Credit '],['وصولی ','Recovery '],['روزانہ','Daily'],['فروخت','Sales'],['کھاتہ','Khata'],[' روپے',' Rs'],['شروع ','Opening '],['کمی: ','Shortage: '],['وصول ','Received '],['تفصیل','Details'],['ادھار','Credit'],['وصولی','Recovery'],['خرچہ','Expenses'],['روپے','Rs'],[' کلو',' kg'],['کل: ','Total: '],['گاہک','Customer'],['باقی','Remaining'],['وزن','Weight'],['حذف','Delete'],['نام','Name'],['قسم','Type'],['رقم','Amount'],['نقد','Cash'],['آج','Today']];
+var lang='ur';try{lang=localStorage.getItem('plang')||'ur'}catch(e){}
+function tr(t){if(lang!='en')return t;for(var i=0;i<EN.length;i++)t=t.split(EN[i][0]).join(EN[i][1]);return t}
+var _al=window.alert.bind(window),_co=window.confirm.bind(window),_pr=window.prompt.bind(window);window.alert=function(t){_al(tr(t))};window.confirm=function(t){return _co(tr(t))};window.prompt=function(t){return _pr(tr(t))};
+function tg(){lang=lang=='en'?'ur':'en';try{localStorage.setItem('plang',lang)}catch(e){}draw()}
+var TABS=[['home','آج'],['buy','خریداری'],['sale','فروخت'],['khata','کھاتہ'],['exp','خرچہ'],['wt','وزن']];
+function nav(){$('nav').innerHTML=TABS.map(function(t){return '<button class="'+(t[0]==tab?'on':'')+'" onclick="go(\''+t[0]+'\')">'+tr(t[1])+'</button>'}).join('')}
+function go(t){tab=t;draftPhoto='';draw()}
+$('dt').value=D;$('dt').onchange=function(){D=this.value||D;draw()};
+function bal(c){return db.led.filter(function(l){return l.cid==c}).reduce(function(t,l){return t+(l.type=='udh'?N(l.amt):-N(l.amt))},0)}
+function supRem(b){return N(b.total)-N(b.paid)-sum(db.spay.filter(function(p){return p.bid==b.id}),'amt')}
+function draw(){var en=lang=='en';document.documentElement.dir=en?'ltr':'rtl';document.documentElement.lang=en?'en':'ur';$('lg').textContent=en?'اردو':'EN';$('hd').textContent='📒 '+tr('ٹریڈ بُک');nav();$('app').innerHTML=tr(({home:home,buy:buy,sale:sale,khata:khata,exp:exp,wt:wt})[tab]());window.scrollTo(0,0)}
+
+function home(){
+ var S=db.sales.filter(function(x){return x.date==D}),B=db.buys.filter(function(x){return x.date==D});
+ var saleAmt=sum(S,'amt'),saleCash=sum(S,'recd'),rec=sum(db.led.filter(function(l){return l.date==D&&l.type=='pay'}),'amt');
+ var ex=sum(db.exp.filter(function(x){return x.date==D}),'amt'),bp=sum(B,'paid'),sp=sum(db.spay.filter(function(x){return x.date==D}),'amt');
+ var inn=saleCash+rec,out=ex+bp+sp,net=inn-out;
+ var w=db.wt[D]||{},bk=sum(B,'kg'),sk=sum(S,'kg');
+ var cu=db.cust.reduce(function(t,c){return t+Math.max(0,bal(c.id))},0),su=db.buys.reduce(function(t,b){return t+Math.max(0,supRem(b))},0);
+ var wl=(w.open!=null&&w.close!=null)?(N(w.open)+bk-sk-N(w.close)):null;
+ return '<div class="c"><h2>آج کا حساب</h2><div class="g">'+
+ '<div class="k"><small>کل فروخت</small><b>'+F(saleAmt)+'</b></div>'+
+ '<div class="k"><small>فروخت کا وزن (کلو)</small><b>'+F(sk)+'</b></div>'+
+ '<div class="k"><small>نقد آمد (فروخت + وصولی)</small><b>'+F(inn)+'</b></div>'+
+ '<div class="k"><small>نقد خرچ (خرچہ + مال)</small><b>'+F(out)+'</b></div></div>'+
+ '<div class="tot '+(net<0?'bad':'')+'">آج کا نقد بچت: '+F(net)+' روپے</div></div>'+
+ '<div class="c"><h2>باقی لین دین</h2><div class="r"><span>گاہکوں سے لینا ہے</span><b class="bad">'+F(cu)+'</b></div><div class="r"><span>سپلائر کو دینا ہے</span><b class="bad">'+F(su)+'</b></div></div>'+
+ '<div class="c"><h2>وزن کی جانچ</h2>'+(wl===null?'<div class="m">"وزن" ٹیب میں صبح اور شام کا وزن لکھیں تو یہاں فرق نظر آئے گا۔</div>':
+ '<div class="m">شروع '+F(w.open)+' + خریداری '+F(bk)+' − فروخت '+F(sk)+' = متوقع '+F(N(w.open)+bk-sk)+' کلو، اصل بند وزن '+F(w.close)+'</div><div class="tot '+(Math.abs(wl)>0.5?'bad':'')+'">'+(wl>0.5?'کمی: '+wl.toFixed(1)+' کلو':wl<-0.5?'زیادہ: '+(-wl).toFixed(1)+' کلو':'وزن برابر ہے')+'</div>')+'</div>'+
+ '<div class="c"><h2>بیک اپ</h2><div class="g"><button class="b" onclick="bk()">بیک اپ محفوظ کریں</button><button class="b" onclick="$(\'rf\').click()">بیک اپ واپس لائیں</button></div><input type="file" id="rf" accept=".json" hidden onchange="rs(this)"></div>'
+}
+function bk(){var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(db)],{type:'application/json'}));a.download='phalli-backup-'+D+'.json';a.click()}
+function rs(i){var f=i.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{db=Object.assign(db,JSON.parse(r.result));save();draw();alert('بیک اپ واپس آ گیا')}catch(e){alert('فائل درست نہیں')}};r.readAsText(f)}
+
+function photo(inp){var f=inp.files[0];if(!f)return;var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var s=Math.min(1,800/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*s;c.height=im.height*s;c.getContext('2d').drawImage(im,0,0,c.width,c.height);draftPhoto=c.toDataURL('image/jpeg',.6);$('pv').src=draftPhoto;$('pv').style.display='block'};im.src=r.result};r.readAsDataURL(f)}
+function show(i){$('ovi').src=db.buys.filter(function(b){return b.id==i})[0].img;$('ov').style.display='flex'}
+
+function buy(){
+ var L=db.buys.slice().reverse().slice(0,40).map(function(b){var rem=supRem(b);return '<div class="r"><div>'+(b.img?'<img class="t" src="'+b.img+'" onclick="show('+b.id+')"> ':'')+'<b>'+E(b.sup||'سپلائر')+'</b> <span class="m">'+b.date+'</span><div class="m">'+F(b.kg)+' کلو × '+F(b.rate)+' = '+F(b.total)+' | نقد '+F(b.paid)+(rem>0?' | <span class="bad">باقی '+F(rem)+'</span>':'')+'</div></div><div>'+(rem>0?'<button class="s" onclick="spay('+b.id+')">ادا کیا</button> ':'')+'<button class="x" onclick="del(\'buys\','+b.id+')">حذف</button></div></div>'}).join('');
+ return '<div class="c"><h2>مال خریداری</h2><label>سپلائر / دکان کا نام</label><input id="a1"><label>وزن (کلو)</label><input id="a2" type="number" inputmode="decimal" oninput="bt()"><label>ریٹ فی کلو</label><input id="a3" type="number" inputmode="decimal" oninput="bt()"><div class="tot" id="a4">کل رقم: 0</div><label>نقد ادا کیے</label><input id="a5" type="number" inputmode="decimal" oninput="bt()"><div class="tot bad" id="a6">ادھار: 0</div><label>بل کی تصویر</label><input type="file" accept="image/*" onchange="photo(this)"><img id="pv" style="display:none;width:100%;max-height:220px;object-fit:contain;margin-top:8px"><button class="b" onclick="addBuy()">محفوظ کریں</button></div><div class="c"><h2>پچھلی خریداری</h2>'+(L||'<div class="m">ابھی کوئی خریداری درج نہیں۔</div>')+'</div>'}
+function bt(){var t=N($('a2').value)*N($('a3').value);$('a4').textContent=tr('کل رقم: ')+F(t);$('a6').textContent=tr('ادھار: ')+F(t-N($('a5').value))}
+function addBuy(){var kg=N($('a2').value),rate=N($('a3').value);if(!kg||!rate){alert('وزن اور ریٹ لکھیں');return}db.buys.push({id:id(),date:D,sup:$('a1').value,kg:kg,rate:rate,total:kg*rate,paid:N($('a5').value),img:draftPhoto});save();go('buy')}
+function spay(i){var a=N(prompt('کتنی رقم ادا کی؟'));if(a>0){db.spay.push({id:id(),date:D,bid:i,amt:a});save();draw()}}
+
+function sale(){
+ var S=db.sales.filter(function(x){return x.date==D});
+ var L=S.slice().reverse().map(function(x){var c=db.cust.filter(function(c){return c.id==x.cid})[0];return '<div class="r"><div><b>'+F(x.amt)+'</b> روپے <span class="m">'+F(x.kg)+' کلو'+(c?' | '+E(c.name):'')+'</span><div class="m">وصول '+F(x.recd)+(x.amt-x.recd>0?' | <span class="bad">ادھار '+F(x.amt-x.recd)+'</span>':'')+'</div></div><button class="x" onclick="delSale('+x.id+')">حذف</button></div>'}).join('');
+ return '<div class="c"><h2>فروخت درج کریں</h2><label>وزن (کلو)</label><input id="s1" type="number" inputmode="decimal"><label>کل رقم</label><input id="s2" type="number" inputmode="decimal"><label>نقد وصول ہوئے</label><input id="s3" type="number" inputmode="decimal" placeholder="پوری رقم نقد ہو تو خالی چھوڑیں"><label>گاہک (صرف ادھار کے لیے)</label><select id="s4"><option value="">— کوئی نہیں —</option>'+db.cust.map(function(c){return '<option value="'+c.id+'">'+E(c.name)+'</option>'}).join('')+'</select><button class="b" onclick="addSale()">محفوظ کریں</button></div><div class="c"><h2>آج کی فروخت</h2><div class="tot">کل: '+F(sum(S,'amt'))+' روپے | '+F(sum(S,'kg'))+' کلو</div>'+(L||'<div class="m">آج ابھی کوئی فروخت نہیں۔</div>')+'</div>'}
+function addSale(){var amt=N($('s2').value),kg=N($('s1').value),r=$('s3').value==''?amt:N($('s3').value),cid=$('s4').value;if(!amt){alert('رقم لکھیں');return}if(r<amt&&!cid){alert('ادھار کے لیے گاہک چنیں (کھاتہ ٹیب میں پہلے گاہک بنائیں)');return}var sid=id();db.sales.push({id:sid,date:D,kg:kg,amt:amt,recd:r,cid:cid});if(r<amt)db.led.push({id:id(),date:D,cid:cid,type:'udh',amt:amt-r,sid:sid,note:'فروخت'});save();go('sale')}
+function delSale(i){if(!confirm('حذف کریں؟'))return;db.sales=db.sales.filter(function(x){return x.id!=i});db.led=db.led.filter(function(l){return l.sid!=i});save();draw()}
+
+function khata(){
+ var L=db.cust.map(function(c){var b=bal(c.id),h=db.led.filter(function(l){return l.cid==c.id}).slice().reverse().slice(0,10).map(function(l){return '<div class="m">'+l.date+' — '+(l.type=='udh'?'ادھار ':'وصولی ')+F(l.amt)+' <button class="x" onclick="delLed('+l.id+')">حذف</button></div>'}).join('');
+ return '<div class="c"><div class="r"><div><b>'+E(c.name)+'</b> <span class="m">'+E(c.phone||'')+'</span></div><b class="'+(b>0?'bad':'ok')+'">'+F(b)+'</b></div><button class="s" onclick="pay('+c.id+')">وصولی لیں</button> <button class="s" onclick="udh('+c.id+')">ادھار لکھیں</button><details><summary class="m">تفصیل</summary>'+(h||'<div class="m">کوئی اندراج نہیں</div>')+'</details></div>'}).join('');
+ return '<div class="c"><h2>نیا گاہک</h2><label>نام</label><input id="n1"><label>فون (اختیاری)</label><input id="n2" type="tel"><button class="b" onclick="addCust()">گاہک شامل کریں</button></div><div class="tot" style="margin:0 0 8px">کل ادھار: '+F(db.cust.reduce(function(t,c){return t+Math.max(0,bal(c.id))},0))+' روپے</div>'+(L||'<div class="m">ابھی کوئی گاہک نہیں۔</div>')}
+function addCust(){var n=$('n1').value.trim();if(!n)return;db.cust.push({id:id(),name:n,phone:$('n2').value});save();draw()}
+function pay(c){var a=N(prompt('وصولی کی رقم؟'));if(a>0){db.led.push({id:id(),date:D,cid:c,type:'pay',amt:a});save();draw()}}
+function udh(c){var a=N(prompt('ادھار کی رقم؟'));if(a>0){db.led.push({id:id(),date:D,cid:c,type:'udh',amt:a,note:'ادھار'});save();draw()}}
+function delLed(i){if(!confirm('حذف کریں؟'))return;db.led=db.led.filter(function(l){return l.id!=i});save();draw()}
+
+function exp(){
+ var X=db.exp.filter(function(x){return x.date==D}),a=sum(X.filter(function(x){return x.kind=='roz'}),'amt'),t=sum(X.filter(function(x){return x.kind=='tool'}),'amt');
+ var L=X.slice().reverse().map(function(x){return '<div class="r"><div><b>'+F(x.amt)+'</b> <span class="m">'+(x.kind=='tool'?'کاروباری سامان':'روزانہ')+' | '+E(x.note)+'</span></div><button class="x" onclick="del(\'exp\','+x.id+')">حذف</button></div>'}).join('');
+ return '<div class="c"><h2>خرچہ درج کریں</h2><label>قسم</label><select id="e1"><option value="roz">روزانہ خرچہ (کھانا، کرایہ، مزدوری)</option><option value="tool">کاروباری سامان (ترازو، تھیلے، ریڑھی، مرمت)</option></select><label>تفصیل</label><input id="e2"><label>رقم</label><input id="e3" type="number" inputmode="decimal"><button class="b" onclick="addExp()">محفوظ کریں</button></div><div class="c"><h2>آج کے خرچے</h2><div class="g"><div class="k"><small>روزانہ</small><b>'+F(a)+'</b></div><div class="k"><small>کاروباری سامان</small><b>'+F(t)+'</b></div></div>'+(L||'<div class="m">آج کوئی خرچہ نہیں۔</div>')+'</div>'}
+function addExp(){var a=N($('e3').value);if(!a){alert('رقم لکھیں');return}db.exp.push({id:id(),date:D,kind:$('e1').value,note:$('e2').value,amt:a});save();go('exp')}
+
+function wt(){var w=db.wt[D]||{};return '<div class="c"><h2>روزانہ وزن</h2><label>دکان کھولتے وقت وزن (کلو)</label><input id="w1" type="number" inputmode="decimal" value="'+(w.open==null?'':w.open)+'"><label>دکان بند کرتے وقت وزن (کلو)</label><input id="w2" type="number" inputmode="decimal" value="'+(w.close==null?'':w.close)+'"><button class="b" onclick="saveW()">محفوظ کریں</button></div><div class="c m">فرق "آج" والے ٹیب میں خود نظر آئے گا: شروع + خریداری − فروخت = متوقع بند وزن۔</div>'}
+function saveW(){var o=$('w1').value,c=$('w2').value;db.wt[D]={open:o==''?null:N(o),close:c==''?null:N(c)};save();go('home')}
+
+function del(k,i){if(!confirm('حذف کریں؟'))return;db[k]=db[k].filter(function(x){return x.id!=i});if(k=='buys')db.spay=db.spay.filter(function(p){return p.bid!=i});save();draw()}
+draw();
+</script>
+</body>
+</html>
